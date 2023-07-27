@@ -64,7 +64,7 @@
         <Button Click="OpenArcExplorer" Classes="mainMenuButton" Foreground="White">
           <TextBlock Classes="mainMenuButtonText">ARC Explorer</TextBlock>
         </Button>
-        <Button Classes="mainMenuButton" Foreground="White">
+        <Button Click="OpenFileEditor" Classes="mainMenuButton" Foreground="White">
           <TextBlock Classes="mainMenuButtonText">File editor</TextBlock>
         </Button>
         <Button Classes="mainMenuButton" Foreground="Red">

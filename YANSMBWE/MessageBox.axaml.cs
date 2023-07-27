@@ -2,7 +2,6 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
-using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -15,11 +14,10 @@ public partial class MessageBox : Window
     public string Message { get; set; }
     public List<string> Buttons { get; set; }
 
-    public event EventHandler? ButtonPressed;
-    public string? Choice { get; set; } = null;
-
     public MessageBox(string Title, string Message, List<string> Buttons)
     {
+        CanResize = false;
+        WindowStartupLocation = WindowStartupLocation.CenterScreen;
         this.Message = Message;
         this.Buttons = Buttons;
 
@@ -27,6 +25,7 @@ public partial class MessageBox : Window
 
         DataContext = this;
         SizeToContent = SizeToContent.WidthAndHeight;
+        
         InitializeComponent();
 
         this.Title = Title;
@@ -42,27 +41,13 @@ public partial class MessageBox : Window
             width += messageBoxButton.Width;
             buttonsPanel.Children.Add(contentControl);
         }
-
-        Show();
     }
-
     public MessageBox() : this("", "", new()) { }
 
-    protected override void OnLostFocus(RoutedEventArgs e)
-    {
-        base.OnLostFocus(e);
-        Focus();
-    }
-
-    private void OnButtonPressed(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void OnButtonPressed(object? sender, RoutedEventArgs e)
     {
         if (sender is Button button)
             if (button.Tag is MessageBoxButton messageBoxButton)
-            {
-                Choice = messageBoxButton.ButtonText;
-                ButtonPressed?.Invoke(this, EventArgs.Empty);
-                Trace.WriteLine($"invoked {Choice}");
-                Close();
-            }
+                Close(messageBoxButton.ButtonText);
     }
 }

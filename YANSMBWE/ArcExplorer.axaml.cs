@@ -1,43 +1,38 @@
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
-using Avalonia.Threading;
-using Newtonsoft.Json.Linq;
+using Avalonia.Dialogs;
+using System.Threading.Tasks;
+using Avalonia.Controls.Platform;
+using Avalonia;
 using System;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.IO;
-using System.Reactive;
-using System.Reflection.Metadata;
-
-using ReactiveUI;
-using System.Runtime.CompilerServices;
-using YANSMBWE.U8;
 
 namespace YANSMBWE
 {
     public partial class ArcExplorer : Window
     {
-        ArcExplorerViewModel ViewModel { get; set; } = new ArcExplorerViewModel();
+        ArcExplorerViewModel ViewModel { get; set; }
 
         public ArcExplorer(string? filePath = null)
         {
-            if (filePath is not null)
-                OpenFile(filePath);
-
             InitializeComponent();
 
-            Show();
+            ViewModel = new ArcExplorerViewModel(filePath);
+            DataContext = ViewModel;
         }
         public ArcExplorer() : this(null) { } //Avalonia
 
-        public void OpenFile(string filePath)
+        private async void OpenFile(object sender, RoutedEventArgs e)
         {
-            ViewModel = new ArcExplorerViewModel(filePath);
-            DataContext = ViewModel;
+            var dialogImpl = AvaloniaLocator.Current.GetService<ISystemDialogImpl>() ?? throw new Exception();
+            Trace.WriteLine(dialogImpl.GetType());
+            OpenFileDialog dialog = new();
+            ManagedFileDialogOptions options = new()
+            {
+                AllowDirectorySelection = false,
+            };
+
+            string[] files = await dialog.ShowManagedAsync(this, options);
         }
     }
 }

@@ -10,37 +10,28 @@ using YANSMBWE.Utils;
 
 namespace YANSMBWE
 {
-    public class ArcExplorerViewModel : ViewModelBase
+    public class ArcEditorTabDataContext : ViewModelBase
     {
+        public string? FilePath { get; set; }
+
         public ObservableCollection<U8Node> Nodes { get; set; } = new();
-        
+
         U8Archive? archive = null;
-        public U8Archive? Archive { get => archive; set => RaiseAndSetIfChanged(ref archive, value, nameof(Archive), nameof(HasFile)); }
-        public bool HasFile { get => archive is not null; }
-        
+        public U8Archive? Archive { get => archive; set => RaiseAndSetIfChanged(ref archive, value, nameof(Archive)); }
+
         U8Node? selected = null;
         public U8Node? Selected { get => selected; set => RaiseAndSetIfChanged(ref selected, value, nameof(Selected), nameof(HasSelected), nameof(SelectedPathTask)); }
         public bool HasSelected { get => selected is not null; }
         public Task<string> SelectedPathTask { get => GetSelectedPathAsync(); }
 
-
-        public ObservableCollection<ArcExplorerTab> Tabs { get; set; } = new()
-        {
-            new() { Name = "Name 1" },
-            new() { Name = "Name 2" },
-            new() { Name = "Name 3", Current = true },
-            new() { Name = "Name 4" },
-            new() { Name = "Name 5" },
-            new() { Name = "Name 6" },
-            new() { Name = "Name 7" },
-            new() { Name = "Name 8" }
-        };
-
-        public ArcExplorerViewModel(string? filePath = null)
+        public ArcEditorTabDataContext(string? filePath = null)
         {
             if (string.IsNullOrEmpty(filePath))
-                return;
-            Archive = U8Archive.FromBytes(File.ReadAllBytes(filePath));
+                Archive = new U8Archive();
+            else
+                Archive = U8Archive.FromBytes(File.ReadAllBytes(filePath));
+
+            FilePath = filePath;
             Nodes.Add(Archive.Root);
         }
 
@@ -53,8 +44,6 @@ namespace YANSMBWE
         async Task<string> GetSelectedPathAsync()
         {
             if (!HasSelected)
-                return "";
-            if (!HasFile)
                 return "";
             lock (Nodes)
             {

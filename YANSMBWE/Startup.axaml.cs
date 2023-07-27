@@ -11,6 +11,7 @@ using Avalonia.Styling;
 using System.IO;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Threading.Tasks;
 
 namespace YANSMBWE
 {
@@ -43,18 +44,30 @@ namespace YANSMBWE
             }
         }
 
+        // TODO: Remove
         private void OpenArcExplorer(object sender, RoutedEventArgs e)
         {
             if (Application.Current is null ||
                 Application.Current.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktopLifetime)
                 throw new UnreachableException("Wrong application lifetime");
 
-            var arcExplorer = new ArcExplorer();
-            desktopLifetime.MainWindow = arcExplorer;
+            desktopLifetime.MainWindow = new ArcExplorer();
+            desktopLifetime.MainWindow.Show();
             Close();
         }
 
-        private void OpenRecentFile(object sender, RoutedEventArgs e)
+        private void OpenFileEditor(object sender, RoutedEventArgs e)
+        {
+            if (Application.Current is null ||
+                Application.Current.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktopLifetime)
+                throw new UnreachableException("Wrong application lifetime");
+
+            desktopLifetime.MainWindow = new FileEditor();
+            desktopLifetime.MainWindow.Show();
+            Close();
+        }
+
+        private async void OpenRecentFile(object sender, RoutedEventArgs e)
         {
             RecentFile? recentFile = null;
             if (sender is Button button)
@@ -67,17 +80,15 @@ namespace YANSMBWE
 
             if (!File.Exists(recentFile.Path))
             {
-                MessageBox messageBox = new("File not found", "Can't find the file you're trying to open\nRemove it from the recent files list?", new() { "Yes", "No" });
-                messageBox.ButtonPressed +=
-                    (object? sender, EventArgs e) =>
-                    {
-                        if (sender is MessageBox msgBox)
-                            if (msgBox.Choice == "No")
-                                return;
-                        RecentFilesManager.RecentFiles.Remove(recentFile);
-                        RecentFilesManager.SaveRecentFiles();
-                        UpdateRecentFiles();
-                    };
+                MessageBox msgBox = new("File not found", "Can't find the file you're trying to open\nRemove it from the recent files list?", new() { "Yes", "No" });
+                string choice = await msgBox.ShowDialog<string>(this);
+
+                if (choice == "Yes")
+                {
+                    RecentFilesManager.RecentFiles.Remove(recentFile);
+                    RecentFilesManager.SaveRecentFiles();
+                    UpdateRecentFiles();
+                }
                 return;
             }
 
@@ -95,17 +106,20 @@ namespace YANSMBWE
                     Application.Current.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktopLifetime)
                     throw new UnreachableException("Wrong application lifetime");
 
-                desktopLifetime.MainWindow = FileHandler.OpenFileInNewWindow(recentFile.Path);
+                FileEditor fileEditor = new();
+                fileEditor.OpenFile(recentFile.Path);
+                fileEditor.Show();
+                desktopLifetime.MainWindow = fileEditor;
                 Close();
             }
             catch (ArgumentException)
             {
-                _ = new MessageBox("Unknown file type", "Unable to open the requested file type.", new() { "Ok" });
+                _ = new MessageBox("Unknown file type", "Unable to open the requested file type.", new() { "Ok" }).ShowDialog(this);
             }
             catch (Exception ex)
             {
                 Trace.TraceError(ex.ToString());
-                _ = new MessageBox("Error opening file", "An error occurred while trying to open the file.", new() { "Ok" });
+                _ = new MessageBox("Error opening file", "An error occurred while trying to open the file.", new() { "Ok" }).ShowDialog(this);
             }
         }
     }

@@ -1,12 +1,7 @@
 ﻿using Avalonia.Controls;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using YANSMBWE.U8;
 
 namespace YANSMBWE
 {
@@ -27,13 +22,13 @@ namespace YANSMBWE
             return FileType.Unknown;
         }
 
-        public static Window OpenFileInNewWindow(string filePath)
+        public static FileEditorTab CreateNewFileTab(string filePath)
         {
             FileType fileType = GetFileType(filePath);
 
             return fileType switch
             {
-                FileType.Arc => new ArcExplorer(filePath),
+                FileType.Arc => new ArcEditorTab(filePath),
                 FileType.Unknown => throw new ArgumentException("Unknown file type"),
                 _ => throw new UnreachableException("Filetype has to be something"),
             };

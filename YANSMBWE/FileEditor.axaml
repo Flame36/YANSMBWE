@@ -1,0 +1,107 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:u8="clr-namespace:YANSMBWE.U8"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="YANSMBWE.FileEditor"
+        Title="FileEditor">
+  <Window.Resources>
+    <SolidColorBrush x:Key="TransparentBrush" Color="#ffffff" Opacity="0" />
+  </Window.Resources>
+  <Window.Styles>
+    <Style Selector="TextBlock">
+      <Setter Property="FontFamily" Value="assets/fonts/SourceSansPro-Regular.ttf#Source Sans Pro" />
+      <Setter Property="Foreground" Value="White"/>
+    </Style>
+    <Style Selector="TextBlock.mainMenuButtonText">
+      <Setter Property="FontSize" Value="20"/>
+      <!-- <Setter Property="FontWeight" Value="Bold"/> -->
+      <Setter Property="HorizontalAlignment" Value="Center"/>
+      <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+    <Style Selector="Button.mainMenuButton">
+      <Setter Property="Background" Value="#333"/>
+      <Setter Property="Foreground" Value="White"/>
+      <Setter Property="Height" Value="70"/>
+      <Setter Property="HorizontalAlignment" Value="Stretch"/>
+    </Style>
+    
+    <Style Selector="Button.transparent">
+      <Setter Property="Background" Value="{DynamicResource TransparentBrush}"/>
+    </Style>
+    <Style Selector="Button.transparent:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="{DynamicResource TransparentBrush}"/>
+    </Style>
+    
+    <Style Selector="Button.tabButton">
+      <Setter Property="Background" Value="Red"/>
+    </Style>
+    <Style Selector="Button.tabButton:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="Red"/>
+    </Style>
+    
+    <Style Selector="Button.currentTabButton">
+      <Setter Property="Background" Value="Green"/>
+    </Style>
+    <Style Selector="Button.currentTabButton:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="Green"/>
+    </Style>
+  </Window.Styles>
+  <DockPanel>
+    <StackPanel DockPanel.Dock="Top">
+      <Menu>
+        <MenuItem Header="_File">
+          <MenuItem Header="_Open..."/>
+          <Separator/>
+          <MenuItem Header="_Exit"/>
+        </MenuItem>
+        <MenuItem Header="_Edit">
+          <MenuItem Header="Copy"/>
+          <MenuItem Header="Paste"/>
+        </MenuItem>
+      </Menu>
+      <Border Padding="5, 5, 5, 0" Background="#181818">
+        <StackPanel Orientation="Horizontal">
+          <ItemsRepeater Items="{Binding Tabs}">
+            <ItemsRepeater.Layout>
+              <StackLayout Spacing="1" Orientation="Horizontal" />
+            </ItemsRepeater.Layout>
+            <ItemsRepeater.ItemTemplate>
+              <DataTemplate>
+                <StackPanel Orientation="Horizontal" Height="30">
+                  <Button Click="SelectTab" Tag="{Binding .}" Classes="tabButton" Classes.currentTabButton="{Binding IsActive}">
+                    <TextBlock VerticalAlignment="Center" Text="{Binding TabName}" />
+                  </Button>
+                  <Button Margin="-5, 0, 0, 0" Click="CloseTab" Tag="{Binding .}" Classes="tabButton" Classes.currentTabButton="{Binding IsActive}">
+                    <Image VerticalAlignment="Center" Height="20" Source="assets/images/x_icon.png"></Image>
+                  </Button>
+                </StackPanel>
+              </DataTemplate>
+            </ItemsRepeater.ItemTemplate>
+          </ItemsRepeater>
+          <Button Classes="transparent">
+            <Image VerticalAlignment="Center" Height="20" Source="assets/images/plus_icon.png"></Image>
+          </Button>
+        </StackPanel>
+      </Border>
+    </StackPanel>
+    <Panel>
+      <ContentControl IsVisible="{Binding HasSelectedTab}" Content="{Binding SelectedTab}" HorizontalAlignment="Stretch"/>
+      <Border IsVisible="{Binding !HasSelectedTab}" Padding="5" Background="#181818">
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+          <TextBlock Text="No tabs" FontSize="20" HorizontalAlignment="Center"/>
+          <StackPanel Orientation="Horizontal" Margin="0, 10" Spacing="5">
+            <Button VerticalAlignment="Center">
+              <TextBlock Text="Open file"/>
+            </Button>
+            <TextBlock Text="or" FontSize="20" VerticalAlignment="Center"/>
+            <Button VerticalAlignment="Center">
+              <TextBlock Text="Create file"/>
+            </Button>
+          </StackPanel>
+        </StackPanel>
+      </Border>
+    </Panel>
+  </DockPanel>
+</Window>

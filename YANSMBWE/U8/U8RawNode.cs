@@ -31,9 +31,9 @@ namespace YANSMBWE.U8
             int index = (int)(header.RootNodeOffset + nodeIndex * U8Archive.NODE_LENGTH);
             byte type = data[index];
             //Sketchy, but is essentially the same as reading a 24-bit uint
-            uint nameOffset = BigEndianBitConverter.ToUInt32(data, index) % 16777216;
-            uint dataOffset = BigEndianBitConverter.ToUInt32(data, index + 4);
-            uint size = BigEndianBitConverter.ToUInt32(data, index + 8);
+            uint nameOffset = CustomEndianBitConverter.ToUInt32(data, index) % 16777216;
+            uint dataOffset = CustomEndianBitConverter.ToUInt32(data, index + 4);
+            uint size = CustomEndianBitConverter.ToUInt32(data, index + 8);
 
             return new U8RawNode(type, nameOffset, dataOffset, size, nodeIndex);
         }

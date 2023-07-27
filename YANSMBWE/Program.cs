@@ -6,6 +6,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using YANSMBWE.Utils;
 
 namespace YANSMBWE
 {
@@ -19,6 +20,7 @@ namespace YANSMBWE
         {
             Trace.Listeners.Add(new TextWriterTraceListener(new StreamWriter(File.OpenWrite("logs.txt"))));
             Trace.AutoFlush = true;
+
             try
             {
                 var a = BuildAvaloniaApp();

@@ -26,7 +26,12 @@ namespace YANSMBWE.U8
             this.Root = Root;
         }
         public U8Archive(U8Header Header, List<U8Node> Nodes) : this(Header, Nodes, Nodes.First()) { }
-
+        public U8Archive()
+        {
+            Header = new(U8Header.Magic, 0, 0, 0);
+            Root = new U8Node(U8NodeType.Root | U8NodeType.Dir, "", Array.Empty<byte>());
+            Nodes = new List<U8Node>() { Root };
+        }
 
         static List<string> ReadStringTable(byte[] data, U8Header header, List<U8RawNode> nodes)
         {

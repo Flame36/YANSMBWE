@@ -27,9 +27,9 @@ namespace YANSMBWE.U8
         public static U8Header FromBytes(byte[] data)
         {
             byte[] tag = data.SubArray(0, 4);
-            UInt32 rootNodeOffset = BigEndianBitConverter.ToUInt32(data, 4);
-            UInt32 headerSize = BigEndianBitConverter.ToUInt32(data, 8);
-            UInt32 dataOffset = BigEndianBitConverter.ToUInt32(data, 12);
+            UInt32 rootNodeOffset = CustomEndianBitConverter.ToUInt32(data, 4);
+            UInt32 headerSize = CustomEndianBitConverter.ToUInt32(data, 8);
+            UInt32 dataOffset = CustomEndianBitConverter.ToUInt32(data, 12);
 
             return new U8Header(tag, rootNodeOffset, headerSize, dataOffset);
         }

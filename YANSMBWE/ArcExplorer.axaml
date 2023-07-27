@@ -26,7 +26,8 @@
     </Style>
   </Window.Styles>
   <DockPanel>
-    <Menu DockPanel.Dock="Top">
+    <StackPanel DockPanel.Dock="Top">
+      <Menu>
         <MenuItem Header="_File">
           <MenuItem Header="_Open..."/>
           <Separator/>
@@ -37,9 +38,29 @@
           <MenuItem Header="Paste"/>
         </MenuItem>
       </Menu>
+      <Border Padding="0, 5, 0, 0" Background="#181818">
+        <ItemsRepeater Items="{Binding Tabs}">
+          <ItemsRepeater.Layout>
+            <StackLayout Spacing="1" Orientation="Horizontal" />
+          </ItemsRepeater.Layout>
+          <ItemsRepeater.ItemTemplate>
+            <DataTemplate>
+              <Button Height="30" Tag="{Binding .}">
+                <StackPanel Orientation="Horizontal">
+                  <TextBlock VerticalAlignment="Center" Text="{Binding Name}" />
+                  <Button Tag="{Binding .}">
+                    <Image VerticalAlignment="Center" Height="20" Source="assets/images/x_icon.png"></Image>
+                  </Button>
+                </StackPanel>
+              </Button>
+            </DataTemplate>
+          </ItemsRepeater.ItemTemplate>
+        </ItemsRepeater>
+      </Border>
+    </StackPanel>
     <Border Padding="5" Background="#181818">
       <Grid ColumnDefinitions="*, 4, *">
-        <Border Grid.Column="0" BorderThickness="1" BorderBrush="#444" Padding="15" Background="#222">
+        <Border IsVisible="{Binding HasFile}" Grid.Column="0" BorderThickness="1" BorderBrush="#444" Padding="15" Background="#222">
           <TreeView Items="{Binding Nodes}" SelectedItem="{Binding Selected}" HorizontalAlignment="Stretch">
             <TreeView.ItemTemplate>
               <TreeDataTemplate DataType="u8:U8Node" ItemsSource="{Binding SubNodes}">
@@ -55,6 +76,14 @@
               </ContextMenu>
             </TreeView.ContextMenu>
           </TreeView>
+        </Border>
+        <Border IsVisible="{Binding !HasFile}" Grid.Column="0" BorderThickness="1" BorderBrush="#444" Padding="15" Background="#222">
+          <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock HorizontalAlignment="Center" Text="No files opened"/>
+            <Button Click="OpenFile" HorizontalAlignment="Center">
+              <TextBlock Text="Open file"/>
+            </Button>
+          </StackPanel>
         </Border>
         <GridSplitter Grid.Column="1" Margin="1, 0" Background="#181818" ResizeDirection="Columns"/>
         <Border Grid.Column="2" BorderThickness="1" Padding="15" BorderBrush="#444" Background="#222">
@@ -80,7 +109,7 @@
               <TextBlock IsVisible="{Binding Selected.IsFile}" Text="{Binding Selected.Data.Length}"/>
             </StackPanel>
           </StackPanel>
-      </Border>
+        </Border>
       </Grid>
     </Border>
   </DockPanel>

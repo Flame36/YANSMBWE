@@ -17,7 +17,11 @@ namespace YANSMBWE
 {
     public static class RecentFilesManager
     {
-        static readonly SemaphoreSlim semaphore = new SemaphoreSlim(1);
+        static readonly SemaphoreSlim semaphore = new(1);
+        // TODO: Get this from settings
+        // TODO: Create folder if not exist
+        static readonly string recentsPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".yansmbwe", "recent.json");
+
         static List<RecentFile>? recentFiles = null;
         public static List<RecentFile> RecentFiles { get => GetRecentFiles(); set => SetRecentFiles(value); }
 
@@ -32,14 +36,14 @@ namespace YANSMBWE
                     return recentFiles;
                 }
 
-                if (!File.Exists("recent.json"))
+                if (!File.Exists(recentsPath))
                 {
                     recentFiles = new List<RecentFile>();
                     return recentFiles;
                 }
 
                 List<RecentFile> files = new();
-                JArray recentFilesJson = JArray.Parse(File.ReadAllText("recent.json"));
+                JArray recentFilesJson = JArray.Parse(File.ReadAllText(recentsPath));
                 
                 foreach (JToken file in recentFilesJson)
                 {
@@ -97,7 +101,7 @@ namespace YANSMBWE
                     recentFilesJson.Add(fileJson);
                 }
 
-                File.WriteAllText("recent.json", recentFilesJson.ToString());
+                File.WriteAllText(recentsPath, recentFilesJson.ToString());
             }
             finally
             {

@@ -15,7 +15,7 @@ namespace YANSMBWE
         public string Name { get; set; } = "FileName";
         public string Path { get; set; } = "C:/Users/MyUser/Documents/YetAnotherNewSuperMarioBrosWiiEditor/MyAwesomeProject.prj";
         public DateTime LastAccessed { get; set; } = new DateTime(2020, 1, 10);
-        public IBitmap Icon { get => GetIcon(); }
+        public IBitmap Icon { get => ImageHandler.GetImageFromAssembly(IconPath); }
         public string IconPath { get; set; } = "assets/images/arc_icon.png";
 
 
@@ -25,13 +25,6 @@ namespace YANSMBWE
             this.Name = Name;
             this.Path = Path;
             this.LastAccessed = LastAccessed;
-        }
-
-        IBitmap GetIcon()//TODO: This is terrible, cache the 5-6 icons and pass references
-        {
-            string assemblyName = Assembly.GetEntryAssembly().GetName().Name;
-            var uri = new Uri($"avares://{assemblyName}/{IconPath}");
-            return new Bitmap(AvaloniaLocator.Current.GetService<IAssetLoader>().Open(uri));
         }
     }
 }

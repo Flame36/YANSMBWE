@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Avalonia.Controls;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,6 +18,20 @@ namespace YANSMBWE.Utils
             T[] result = new T[length];
             Array.Copy(data, index, result, 0, length);
             return result;
+        }
+
+        public static T? GetButtonTag<T>(this object button)
+        {
+            if (button is Button b)
+                return GetButtonTag<T>(b);
+            else
+                return default;
+        }
+        public static T? GetButtonTag<T>(this Button button)
+        {
+            if (button.Tag is T tag)
+                return tag;
+            else return default;
         }
     }
 }
